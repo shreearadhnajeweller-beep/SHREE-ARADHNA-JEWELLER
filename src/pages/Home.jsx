@@ -1784,8 +1784,15 @@ export default function Home() {
       try {
         const { data, error } = await realSupabase.from('hardik_rates').select('*').eq('id', 1).single();
         if (data && !error) {
-          setGoldRates(prev => ({ ...prev, ...data }));
-          localStorage.setItem('ARADHANA_gold_rates', JSON.stringify(data));
+          const formatted = {
+            gold24k: Number(data.gold24k || 7350),
+            gold22k: Number(data.gold22k || 6737),
+            silver: data.silver1kg ? Math.round(Number(data.silver1kg) / 1000) : 85,
+            silver1kg: Number(data.silver1kg || 85500),
+            lastUpdated: data.updated_at ? new Date(data.updated_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true }) : new Date().toLocaleString()
+          };
+          setGoldRates(prev => ({ ...prev, ...formatted }));
+          localStorage.setItem('ARADHANA_gold_rates', JSON.stringify(formatted));
         } else {
           const { data: localData } = await supabase.from('hardik_rates').select('*').eq('id', 1).single();
           if (localData) setGoldRates(prev => ({ ...prev, ...localData }));
@@ -1817,8 +1824,16 @@ export default function Home() {
       .channel('public:hardik_rates')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'hardik_rates' }, (payload) => {
         if (payload.new) {
-          setGoldRates(prev => ({ ...prev, ...payload.new }));
-          localStorage.setItem('ARADHANA_gold_rates', JSON.stringify(payload.new));
+          const data = payload.new;
+          const formatted = {
+            gold24k: Number(data.gold24k || 7350),
+            gold22k: Number(data.gold22k || 6737),
+            silver: data.silver1kg ? Math.round(Number(data.silver1kg) / 1000) : 85,
+            silver1kg: Number(data.silver1kg || 85500),
+            lastUpdated: data.updated_at ? new Date(data.updated_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true }) : new Date().toLocaleString()
+          };
+          setGoldRates(prev => ({ ...prev, ...formatted }));
+          localStorage.setItem('ARADHANA_gold_rates', JSON.stringify(formatted));
         }
       })
       .subscribe();
@@ -1978,12 +1993,24 @@ export default function Home() {
       minute: '2-digit', 
       hour12: true 
     });
+    const silverValue = Number(tempSilver);
+    const silver1kgVal = silverValue < 1000 ? silverValue * 1000 : silverValue;
+
     const newRates = {
       gold24k: Number(temp24k),
       gold22k: Number(temp22k),
       gold18k: Number(temp18k),
-      silver: Number(tempSilver),
+      silver: silverValue < 1000 ? silverValue : Math.round(silverValue / 1000),
+      silver1kg: silver1kgVal,
       lastUpdated: now
+    };
+
+    const dbPayload = {
+      id: 1,
+      gold24k: Number(temp24k),
+      gold22k: Number(temp22k),
+      silver1kg: silver1kgVal,
+      updated_at: new Date().toISOString()
     };
 
     setGoldRates(newRates);
@@ -1992,7 +2019,7 @@ export default function Home() {
     try {
       await supabase.from('hardik_rates').update(newRates).eq('id', 1);
       try {
-        await realSupabase.from('hardik_rates').upsert({ id: 1, ...newRates });
+        await realSupabase.from('hardik_rates').upsert(dbPayload);
       } catch (cloudErr) {
         console.warn("Cloud rates sync note:", cloudErr);
       }
