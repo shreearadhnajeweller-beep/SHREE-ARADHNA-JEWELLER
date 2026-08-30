@@ -568,10 +568,14 @@ export default function AdminDashboard() {
 }
 
 function LedgerContent({ scheme, payments, handleApproval, setSelectedScheme, isPrintMode = false }) {
+  if (!scheme) return null;
   const user = scheme.custom_users;
   
-  const startDate = new Date(scheme.start_date);
-  const approvedPayments = payments.filter(p => p.status === 'approved');
+  const startDateRaw = scheme.start_date || scheme.created_at || new Date().toISOString();
+  const startDateParsed = new Date(startDateRaw);
+  const startDate = !isNaN(startDateParsed.getTime()) ? startDateParsed : new Date();
+
+  const approvedPayments = (payments || []).filter(p => p && (p.status === 'approved' || p.status === 'VERIFIED'));
   const monthsPaid = approvedPayments.length;
   
   const nextDueDate = new Date(startDate);
@@ -597,12 +601,12 @@ function LedgerContent({ scheme, payments, handleApproval, setSelectedScheme, is
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '30px', fontSize: '1.1rem' }}>
         <div>
-          <p style={{ margin: '0 0 5px' }}><strong>Customer Name:</strong> {user?.full_name || user?.email}</p>
+          <p style={{ margin: '0 0 5px' }}><strong>Customer Name:</strong> {user?.full_name || user?.email || 'Customer'}</p>
           <p style={{ margin: '0 0 5px' }}><strong>Phone Number:</strong> {user?.mobile || user?.phone_number || '-'}</p>
           <p style={{ margin: '0 0 5px' }}><strong>Scheme Start Date:</strong> {startDate.toLocaleDateString()}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <p style={{ margin: '0 0 5px' }}><strong>Monthly Amount:</strong> ₹{scheme.monthly_amount}</p>
+          <p style={{ margin: '0 0 5px' }}><strong>Monthly Amount:</strong> ₹{scheme.monthly_amount || 0}</p>
           <p style={{ margin: '0 0 5px' }}><strong>Total Gold:</strong> {totalGold}g</p>
           {monthsPaid < 11 && (
             <p style={{ margin: '0 0 5px', color: isPrintMode ? '#000' : 'var(--royal-gold)' }}><strong>Next Due Date:</strong> {nextDueDate.toLocaleDateString()}</p>
