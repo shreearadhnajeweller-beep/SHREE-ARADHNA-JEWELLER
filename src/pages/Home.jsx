@@ -1480,7 +1480,7 @@ export default function Home() {
     setCatSlideIndex((prev) => (prev - 1 + 4) % 4);
   };
   const [activeCategory, setActiveCategory] = useState('LADIES');
-  const [activeSubCategory, setActiveSubCategory] = useState('ALL');
+  const [activeSubCategory, setActiveSubCategory] = useState('SHORT MANGALSUTRA');
   const [activeEarringType, setActiveEarringType] = useState('ALL');
   const [visibleCount, setVisibleCount] = useState(16);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
