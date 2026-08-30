@@ -1785,10 +1785,10 @@ export default function Home() {
         const { data, error } = await realSupabase.from('hardik_rates').select('*').eq('id', 1).single();
         if (data && !error) {
           const formatted = {
-            gold24k: Number(data.gold24k || 7350),
-            gold22k: Number(data.gold22k || 6737),
-            silver: data.silver1kg ? Math.round(Number(data.silver1kg) / 1000) : 85,
-            silver1kg: Number(data.silver1kg || 85500),
+            gold24k: Number(data.gold24k) > 0 ? Number(data.gold24k) : 7350,
+            gold22k: Number(data.gold22k) > 0 ? Number(data.gold22k) : 6737,
+            silver: Number(data.silver1kg) > 0 ? Math.round(Number(data.silver1kg) / 1000) : 86,
+            silver1kg: Number(data.silver1kg) > 0 ? Number(data.silver1kg) : 85500,
             lastUpdated: data.updated_at ? new Date(data.updated_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true }) : new Date().toLocaleString()
           };
           setGoldRates(prev => ({ ...prev, ...formatted }));
@@ -1826,10 +1826,10 @@ export default function Home() {
         if (payload.new) {
           const data = payload.new;
           const formatted = {
-            gold24k: Number(data.gold24k || 7350),
-            gold22k: Number(data.gold22k || 6737),
-            silver: data.silver1kg ? Math.round(Number(data.silver1kg) / 1000) : 85,
-            silver1kg: Number(data.silver1kg || 85500),
+            gold24k: Number(data.gold24k) > 0 ? Number(data.gold24k) : 7350,
+            gold22k: Number(data.gold22k) > 0 ? Number(data.gold22k) : 6737,
+            silver: Number(data.silver1kg) > 0 ? Math.round(Number(data.silver1kg) / 1000) : 86,
+            silver1kg: Number(data.silver1kg) > 0 ? Number(data.silver1kg) : 85500,
             lastUpdated: data.updated_at ? new Date(data.updated_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true }) : new Date().toLocaleString()
           };
           setGoldRates(prev => ({ ...prev, ...formatted }));
