@@ -2050,9 +2050,12 @@ export default function Home() {
       <header className="header-main">
         <div className="nav-container">
           
-          <a href="#" className="nav-brand" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textDecoration: 'none' }}>
-            <h1 className="brand-name" style={{ margin: 0, fontSize: '17px', fontWeight: '800', fontFamily: 'var(--font-sans)', color: 'var(--peacock-green)', letterSpacing: '1.5px', lineHeight: '1.1', textAlign: 'left' }}>ARADHANA GOLD HOUSE</h1>
-            <span className="brand-subtitle" style={{ fontSize: '9px', letterSpacing: '2.5px', color: 'var(--peacock-green)', fontWeight: '700', marginTop: '3px', textTransform: 'uppercase', textAlign: 'left' }}>ADIPUR (KUTCH)</span>
+          <a href="#" className="nav-brand" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
+            <img src="/assets/logo_badge.png" alt="ARADHANA GOLD HOUSE Logo" className="brand-badge-img" style={{ height: '44px', width: '44px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0, boxShadow: '0 4px 12px rgba(114, 27, 41, 0.15)' }} />
+            <div className="brand-text-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
+              <h1 className="brand-name" style={{ margin: 0, fontSize: '17px', fontWeight: '800', fontFamily: 'var(--font-sans)', color: 'var(--peacock-green)', letterSpacing: '1.5px', lineHeight: '1.1', textAlign: 'left' }}>ARADHANA GOLD HOUSE</h1>
+              <span className="brand-subtitle" style={{ fontSize: '9px', letterSpacing: '2.5px', color: 'var(--peacock-green)', fontWeight: '700', marginTop: '3px', textTransform: 'uppercase', textAlign: 'left', opacity: 0.85 }}>ADIPUR (KUTCH)</span>
+            </div>
           </a>
 
           {/* Desktop Navigation Links */}

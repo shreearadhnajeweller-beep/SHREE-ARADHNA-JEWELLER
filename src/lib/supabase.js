@@ -1,5 +1,9 @@
-// Offline Local Storage Database Client
-// Replaces external Supabase cloud connection
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://kxnsgrytvigymczwaay.supabase.co';
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4bnNncnl0dmlneW1zenp3YWF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxMDcwMzYsImV4cCI6MjEwMzY4MzAzNn0.7g_8-UPfEkgQUUFKspEVHbYZas5orHR5qWqwYbLytEQ';
+
+export const realSupabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const STORAGE_KEYS = {
   store_settings: 'ARADHANA_DB_store_settings',
