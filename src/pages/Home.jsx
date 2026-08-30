@@ -12,8 +12,8 @@ import {
 const bannerImages = [
   {
     desktopUrl: '/assets/main_banner.jpg',
-    mobileUrl: '/assets/main_banner.jpg',
-    line2: 'Royal Heritage Jewelry Collection'
+    mobileUrl: '/assets/mobile_hero_banner.jpg',
+    line2: 'Royal Amethyst & Rose Gold Jewelry Collection'
   }
 ];
 
