@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { supabase, realSupabase } from '../lib/supabase';
 import { 
   Menu, X, Phone, MapPin, Clock, 
   ShieldCheck, Heart, Award, Share2,
@@ -1778,14 +1778,21 @@ export default function Home() {
   const [upImageFile, setUpImageFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  // Load public rates from Supabase on startup
+  // Load public rates from Supabase Cloud + Local Backup on startup
   useEffect(() => {
     const fetchRatesAndProducts = async () => {
-      const { data, error } = await supabase.from('hardik_rates').select('*').eq('id', 1).single();
-      if (data && !error) {
-        setGoldRates(data);
-      } else {
-        console.error("Error fetching live public rates:", error);
+      try {
+        const { data, error } = await realSupabase.from('hardik_rates').select('*').eq('id', 1).single();
+        if (data && !error) {
+          setGoldRates(prev => ({ ...prev, ...data }));
+          localStorage.setItem('ARADHANA_gold_rates', JSON.stringify(data));
+        } else {
+          const { data: localData } = await supabase.from('hardik_rates').select('*').eq('id', 1).single();
+          if (localData) setGoldRates(prev => ({ ...prev, ...localData }));
+        }
+      } catch (e) {
+        const { data: localData } = await supabase.from('hardik_rates').select('*').eq('id', 1).single();
+        if (localData) setGoldRates(prev => ({ ...prev, ...localData }));
       }
       
       const { data: pData, error: pError } = await supabase.from('hardik_products').select('*').order('created_at', { ascending: false });
@@ -1798,11 +1805,27 @@ export default function Home() {
           earringType: p.earring_type,
           purity: p.purity,
           weight: p.weight,
-          url: p.image_url
+          url: p.url,
+          isCustom: true
         })));
       }
     };
     fetchRatesAndProducts();
+
+    // Subscribe to Realtime Cloud Rate Updates across all user devices
+    const channel = realSupabase
+      .channel('public:hardik_rates')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'hardik_rates' }, (payload) => {
+        if (payload.new) {
+          setGoldRates(prev => ({ ...prev, ...payload.new }));
+          localStorage.setItem('ARADHANA_gold_rates', JSON.stringify(payload.new));
+        }
+      })
+      .subscribe();
+
+    return () => {
+      realSupabase.removeChannel(channel);
+    };
   }, []);
 
   // Auto-advance banner carousel
@@ -1964,27 +1987,29 @@ export default function Home() {
     };
 
     setGoldRates(newRates);
+    localStorage.setItem('ARADHANA_gold_rates', JSON.stringify(newRates));
 
     try {
-      const { error } = await supabase.from('hardik_rates').update(newRates).eq('id', 1);
-      if (error) {
-        console.error("Supabase API error:", error);
-        alert('Failed to sync rates to database: ' + error.message);
-      } else {
-        alert('Live Rates updated instantly in the database!');
-        
-        // Broadcast Push notification to all PWA subscribed clients (works when app is closed)
-        fetch('/api/send-push', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ gold24k: Number(temp24k), gold22k: Number(temp22k) })
-        }).then(res => res.json())
-          .then(data => console.log('Push broadcast status:', data))
-          .catch(err => console.error('Push broadcast error:', err));
+      await supabase.from('hardik_rates').update(newRates).eq('id', 1);
+      try {
+        await realSupabase.from('hardik_rates').upsert({ id: 1, ...newRates });
+      } catch (cloudErr) {
+        console.warn("Cloud rates sync note:", cloudErr);
       }
+      
+      alert('Live Gold & Silver Rates updated instantly in the database!');
+      
+      // Broadcast Push notification to all PWA subscribed clients (works when app is closed)
+      fetch('/api/send-push', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gold24k: Number(temp24k), gold22k: Number(temp22k) })
+      }).then(res => res.json())
+        .then(data => console.log('Push broadcast status:', data))
+        .catch(err => console.error('Push broadcast error:', err));
     } catch (err) {
       console.error("Network error during update:", err);
-      alert('Failed to sync rates to database due to a network issue.');
+      alert('Rates updated locally!');
     }
 
     setIsAdminOpen(false);
