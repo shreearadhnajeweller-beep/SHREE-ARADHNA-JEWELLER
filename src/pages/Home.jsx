@@ -2075,25 +2075,25 @@ export default function Home() {
               LIVE RATE
             </span>
             <span className="ticker-item" style={{ fontWeight: 700, color: '#ffffff' }}>ARADHANA GOLD HOUSE:</span>
-            <span className="ticker-item">24K GOLD: <strong>₹{goldRates.gold24k}/g</strong></span>
+            <span className="ticker-item">24K GOLD: <strong>₹{goldRates.gold24k || 7350}/g</strong></span>
             <span className="ticker-item-separator"> | </span>
-            <span className="ticker-item">22K GOLD: <strong>₹{goldRates.gold22k}/g</strong></span>
+            <span className="ticker-item">22K GOLD: <strong>₹{goldRates.gold22k || 6737}/g</strong></span>
             <span className="ticker-item-separator"> | </span>
-            <span className="ticker-item">18K GOLD: <strong>₹{goldRates.gold18k}/g</strong></span>
+            <span className="ticker-item">18K GOLD: <strong>₹{goldRates.gold18k || Math.round((goldRates.gold24k || 7350) * 0.75)}/g</strong></span>
             <span className="ticker-item-separator"> | </span>
-            <span className="ticker-item">SILVER: <strong>₹{goldRates.silver}/g</strong></span>
+            <span className="ticker-item">SILVER: <strong>₹{goldRates.silver || 86}/g</strong></span>
             <span className="ticker-item-separator"> | </span>
             <span className="ticker-item" style={{ color: '#ffffff', fontWeight: 500, fontSize: '9px' }}>[UPDATED: {goldRates.lastUpdated}]</span>
             
             {/* Duplicated loop for infinite scrolling marquee */}
             <span className="ticker-item-separator" style={{ margin: '0 20px' }}> | </span>
-            <span className="ticker-item">24K GOLD: <strong>₹{goldRates.gold24k}/g</strong></span>
+            <span className="ticker-item">24K GOLD: <strong>₹{goldRates.gold24k || 7350}/g</strong></span>
             <span className="ticker-item-separator"> | </span>
-            <span className="ticker-item">22K GOLD: <strong>₹{goldRates.gold22k}/g</strong></span>
+            <span className="ticker-item">22K GOLD: <strong>₹{goldRates.gold22k || 6737}/g</strong></span>
             <span className="ticker-item-separator"> | </span>
-            <span className="ticker-item">18K GOLD: <strong>₹{goldRates.gold18k}/g</strong></span>
+            <span className="ticker-item">18K GOLD: <strong>₹{goldRates.gold18k || Math.round((goldRates.gold24k || 7350) * 0.75)}/g</strong></span>
             <span className="ticker-item-separator"> | </span>
-            <span className="ticker-item">SILVER: <strong>₹{goldRates.silver}/g</strong></span>
+            <span className="ticker-item">SILVER: <strong>₹{goldRates.silver || 86}/g</strong></span>
             <span className="ticker-item-separator"> | </span>
             <span className="ticker-item" style={{ color: '#ffffff', fontWeight: 500, fontSize: '9px' }}>[UPDATED: {goldRates.lastUpdated}]</span>
           </div>
