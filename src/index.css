@@ -15,7 +15,7 @@
   --text-muted: #6E555A;
   --text-light: #fefefe;
   
-  --font-serif: 'Cinzel Decorative', 'Cinzel', serif;
+  --font-serif: 'Montserrat', 'Cinzel', sans-serif;
   --font-sans: 'Montserrat', sans-serif;
   
   --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);

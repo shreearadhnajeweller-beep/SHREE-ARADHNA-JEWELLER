@@ -157,7 +157,7 @@ export default function Dashboard() {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '50px', flexWrap: 'wrap', gap: '20px' }}>
           <div>
-            <h1 style={{ color: 'var(--peacock-green)', fontFamily: '"Cinzel", serif', fontSize: '2.8rem', letterSpacing: '2px', textTransform: 'uppercase', margin: 0 }}>
+            <h1 style={{ color: 'var(--peacock-green)', fontFamily: 'var(--font-sans)', fontSize: '2.8rem', letterSpacing: '2px', textTransform: 'uppercase', margin: 0 }}>
               Digital Harvest
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', marginTop: '10px', margin: '10px 0 0 0' }}>
@@ -189,7 +189,7 @@ export default function Dashboard() {
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
               <Sparkles size={48} color="var(--royal-gold)" />
             </div>
-            <h3 style={{ color: 'var(--peacock-green)', fontSize: '2rem', fontFamily: '"Cinzel", serif', marginBottom: '15px' }}>Start Your Golden Journey</h3>
+            <h3 style={{ color: 'var(--peacock-green)', fontSize: '2rem', fontFamily: 'var(--font-sans)', marginBottom: '15px' }}>Start Your Golden Journey</h3>
             <p style={{ color: 'var(--text-muted)', margin: '0 auto 30px', fontSize: '1.1rem', maxWidth: '500px', lineHeight: '1.6' }}>Invest in pure BIS Hallmarked gold simply for 11 months, and get the 12th month as an absolute BONUS from ARADHANA GOLD HOUSE.</p>
             <form onSubmit={startScheme} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '25px' }}>
               <div>
@@ -241,20 +241,20 @@ export default function Dashboard() {
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
                           <Gem color="var(--royal-gold)" size={24} />
-                          <h3 style={{ color: 'var(--peacock-green)', fontFamily: '"Cinzel", serif', fontSize: '1.6rem', margin: 0, textTransform: 'uppercase', letterSpacing: '1px' }}>Digital Gold Wallet</h3>
+                          <h3 style={{ color: 'var(--peacock-green)', fontFamily: 'var(--font-sans)', fontSize: '1.6rem', margin: 0, textTransform: 'uppercase', letterSpacing: '1px' }}>Digital Gold Wallet</h3>
                         </div>
                         <p style={{ color: 'var(--text-muted)', margin: '0 0 20px 0', fontSize: '0.9rem' }}>Scheme Started: {new Date(scheme.start_date).toLocaleDateString()}</p>
                         
                         <div style={{ marginTop: '20px' }}>
                           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '5px', fontWeight: 'bold' }}>Monthly Installment</p>
-                          <p style={{ color: 'var(--text-dark)', fontSize: '1.8rem', fontWeight: 'bold', margin: 0, fontFamily: '"Cinzel", serif' }}>₹{scheme.monthly_amount.toLocaleString('en-IN')}</p>
+                          <p style={{ color: 'var(--text-dark)', fontSize: '1.8rem', fontWeight: 'bold', margin: 0, fontFamily: 'var(--font-sans)' }}>₹{scheme.monthly_amount.toLocaleString('en-IN')}</p>
                         </div>
                       </div>
 
                       {/* 
                       <div style={{ textAlign: 'right', background: 'var(--ivory-cards)', padding: '20px 30px', borderRadius: '0', border: '1px solid var(--royal-gold-light)', boxShadow: '0 5px 15px rgba(0,0,0,0.03)' }}>
                         <p style={{ color: 'var(--peacock-green)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', fontWeight: 'bold' }}>Total Gold Accumulated</p>
-                        <div style={{ color: 'var(--royal-gold)', fontSize: '2.8rem', fontWeight: 'bold', margin: 0, display: 'flex', alignItems: 'baseline', gap: '5px', justifyContent: 'flex-end', fontFamily: '"Cinzel", serif' }}>
+                        <div style={{ color: 'var(--royal-gold)', fontSize: '2.8rem', fontWeight: 'bold', margin: 0, display: 'flex', alignItems: 'baseline', gap: '5px', justifyContent: 'flex-end', fontFamily: 'var(--font-sans)' }}>
                           {totalGoldAccumulated} <span style={{ fontSize: '1.5rem', color: 'var(--text-dark)' }}>g</span>
                         </div>
                       </div>
@@ -265,7 +265,7 @@ export default function Dashboard() {
                   {/* Payment Schedule Grid */}
                   <div style={{ background: 'var(--pristine-white)', border: '1px solid var(--royal-gold-border)', borderRadius: '0', padding: '40px', boxShadow: 'var(--box-shadow-luxury)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-                      <h4 style={{ color: 'var(--peacock-green)', fontSize: '1.4rem', fontFamily: '"Cinzel", serif', letterSpacing: '1px' }}>Payment Schedule</h4>
+                      <h4 style={{ color: 'var(--peacock-green)', fontSize: '1.4rem', fontFamily: 'var(--font-sans)', letterSpacing: '1px' }}>Payment Schedule</h4>
                       <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 'bold' }}>
                         {schemePayments.filter(p => p.status === 'approved').length} / 11 Months Paid
                       </div>
@@ -378,7 +378,7 @@ export default function Dashboard() {
                         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
                           <Sparkles color="var(--royal-gold)" size={32} />
                         </div>
-                        <div style={{ margin: '10px 0', fontWeight: 'bold', color: 'var(--royal-gold)', fontSize: '1.5rem', fontFamily: '"Cinzel", serif', letterSpacing: '2px' }}>BONUS</div>
+                        <div style={{ margin: '10px 0', fontWeight: 'bold', color: 'var(--royal-gold)', fontSize: '1.5rem', fontFamily: 'var(--font-sans)', letterSpacing: '2px' }}>BONUS</div>
                         <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', borderTop: '1px solid var(--royal-gold-border)', paddingTop: '15px', marginTop: '15px', fontWeight: 'bold' }}>
                           Unlocks Automatically
                         </div>
