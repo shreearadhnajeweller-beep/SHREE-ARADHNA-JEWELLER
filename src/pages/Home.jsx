@@ -1634,7 +1634,7 @@ export default function Home() {
 
   const [likedProducts, setLikedProducts] = useState({});
   const [isWishlistModalOpen, setIsWishlistModalOpen] = useState(false);
-  const [wishlistUser, setWishlistUser] = useState(() => localStorage.getItem('HARDIK_wishlist_user') || null);
+  const [wishlistUser, setWishlistUser] = useState(() => localStorage.getItem('ARADHANA_wishlist_user') || null);
   const [isWishlistSignUp, setIsWishlistSignUp] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const [wishlistError, setWishlistError] = useState(null);
@@ -1643,7 +1643,7 @@ export default function Home() {
   useEffect(() => {
     const syncUser = async () => {
       const uId = localStorage.getItem('userId');
-      const wUser = localStorage.getItem('HARDIK_wishlist_user');
+      const wUser = localStorage.getItem('ARADHANA_wishlist_user');
       
       if (uId && !wUser) {
         try {
@@ -1653,14 +1653,14 @@ export default function Home() {
             .eq('id', uId)
             .single();
           if (data) {
-            localStorage.setItem('HARDIK_wishlist_user', data.email);
+            localStorage.setItem('ARADHANA_wishlist_user', data.email);
             setWishlistUser(data.email);
           }
         } catch (e) {
           console.error(e);
         }
       } else if (!uId && wUser) {
-        localStorage.removeItem('HARDIK_wishlist_user');
+        localStorage.removeItem('ARADHANA_wishlist_user');
         setWishlistUser(null);
       }
     };
@@ -1668,7 +1668,7 @@ export default function Home() {
   }, [isWishlistModalOpen]);
 
   const handleWishlistLogout = () => {
-    localStorage.removeItem('HARDIK_wishlist_user');
+    localStorage.removeItem('ARADHANA_wishlist_user');
     localStorage.removeItem('userId');
     setWishlistUser(null);
   };
@@ -1699,7 +1699,7 @@ export default function Home() {
         }
 
         localStorage.setItem('userId', data.id);
-        localStorage.setItem('HARDIK_wishlist_user', data.email);
+        localStorage.setItem('ARADHANA_wishlist_user', data.email);
         setWishlistUser(data.email);
         alert('Account created and synced successfully! You are now logged in.');
       } else {
@@ -1715,7 +1715,7 @@ export default function Home() {
         }
 
         localStorage.setItem('userId', data.id);
-        localStorage.setItem('HARDIK_wishlist_user', data.email);
+        localStorage.setItem('ARADHANA_wishlist_user', data.email);
         setWishlistUser(data.email);
         alert('Logged in and synced successfully!');
       }
@@ -1728,7 +1728,7 @@ export default function Home() {
 
   // Live Gold Rates & Admin Panel State
   const [goldRates, setGoldRates] = useState(() => {
-    const saved = localStorage.getItem('HARDIK_gold_rates');
+    const saved = localStorage.getItem('ARADHANA_gold_rates');
     return saved ? JSON.parse(saved) : {
       gold24k: 15500,
       gold22k: 14000,
@@ -2648,7 +2648,7 @@ export default function Home() {
                         <Share2 size={16} />
                       </button>
                       <a
-                        href={`https://wa.me/917202921222?text=Hello%20HARDIK%20Jewellers,%20I%20am%20interested%20in%20buying%20your%20${encodeURIComponent(product.title)}.%0A%0AProduct%20Link:%20https://www.aradhanagoldhouse.in/?product=${product.id}`}
+                        href={`https://wa.me/917202921222?text=Hello%20ARADHANA%20Gold%20House,%20I%20am%20interested%20in%20buying%20your%20${encodeURIComponent(product.title)}.%0A%0AProduct%20Link:%20https://www.aradhanagoldhouse.in/?product=${product.id}`}
                         target="_blank"
                         rel="noreferrer"
                         style={{
@@ -2688,7 +2688,7 @@ export default function Home() {
                 }
               </p>
               <a 
-                href="https://wa.me/917202921222?text=Hello%20HARDIK%20Jewellers,%20I%20want%20to%20place%20a%20custom%20order." 
+                href="https://wa.me/917202921222?text=Hello%20ARADHANA%20Gold%20House,%20I%20want%20to%20place%20a%20custom%20order." 
                 target="_blank"
                 rel="noreferrer"
                 className="custom-order-link"
@@ -2811,7 +2811,7 @@ export default function Home() {
                     <a href="tel:+917202921222" className="info-card-phone-link">
                       7202921222
                     </a>
-                    <a href="https://wa.me/917202921222?text=Hello%20HARDIK%20Jewellers,%20I%20have%20an%20inquiry%20regarding%20your%20collections." className="whatsapp-link" target="_blank" rel="noreferrer">
+                    <a href="https://wa.me/917202921222?text=Hello%20ARADHANA%20Gold%20House,%20I%20have%20an%20inquiry%20regarding%20your%20collections." className="whatsapp-link" target="_blank" rel="noreferrer">
                       CONNECT ON WHATSAPP &rarr;
                     </a>
                   </div>
@@ -2940,7 +2940,7 @@ export default function Home() {
               letterSpacing: '1px',
               textTransform: 'uppercase'
             }}>
-              @hardikjewellers_
+              @aradhanagoldhouse
             </h2>
             <p style={{
               fontFamily: 'var(--font-sans)',
@@ -3599,7 +3599,7 @@ export default function Home() {
                     {/* Action buttons (WhatsApp inquiry and Trash remove) */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <a
-                        href={`https://wa.me/917202921222?text=Hello%20HARDIK%20Jewellers,%20I%20am%20interested%20in%20buying%20your%20${encodeURIComponent(product.title)}.%0A%0AProduct%20Link:%20https://www.aradhanagoldhouse.in/?product=${product.id}%20from%20my%20wishlist.`}
+                        href={`https://wa.me/917202921222?text=Hello%20ARADHANA%20Gold%20House,%20I%20am%20interested%20in%20buying%20your%20${encodeURIComponent(product.title)}.%0A%0AProduct%20Link:%20https://www.aradhanagoldhouse.in/?product=${product.id}%20from%20my%20wishlist.`}
                         target="_blank"
                         rel="noreferrer"
                         style={{
@@ -3923,7 +3923,7 @@ export default function Home() {
                   <Share2 size={18} />
                 </button>
                 <a
-                  href={`https://wa.me/917202921222?text=Hello%20HARDIK%20Jewellers,%20I%20am%20interested%20in%20buying%20your%20${encodeURIComponent(lightboxProduct.title)}.%0A%0AProduct%20Link:%20https://www.aradhanagoldhouse.in/?product=${lightboxProduct.id}`}
+                  href={`https://wa.me/917202921222?text=Hello%20ARADHANA%20Gold%20House,%20I%20am%20interested%20in%20buying%20your%20${encodeURIComponent(lightboxProduct.title)}.%0A%0AProduct%20Link:%20https://www.aradhanagoldhouse.in/?product=${lightboxProduct.id}`}
                   target="_blank"
                   rel="noreferrer"
                   style={{

@@ -584,7 +584,7 @@ function LedgerContent({ scheme, payments, handleApproval, setSelectedScheme, is
         {isPrintMode && (
           <div style={{ fontSize: '0.9rem', color: '#444', marginTop: '10px', lineHeight: '1.5' }}>
             <p style={{ margin: 0 }}>Opp. Old Bus Stand, Main Market, City - 123456</p>
-            <p style={{ margin: 0 }}>Phone: +91 98929 11531 | Email: contact@hardikjewellers.com</p>
+            <p style={{ margin: 0 }}>Phone: +91 98929 11531 | Email: aradhanagoldhouse@gmail.com</p>
             <p style={{ margin: 0 }}>GSTIN: 24AAAAA0000A1Z5</p>
           </div>
         )}
