@@ -83,18 +83,17 @@ export default function AdminDashboard() {
     const { data: schemeData, error } = await supabase
       .from('harvest_schemes')
       .select('*, custom_users(*), payments(*)')
-      .eq('status', 'active')
       .order('created_at', { ascending: false });
       
     if (error) {
-      console.error(error);
-      alert('Error fetching schemes');
+      console.error('Error fetching schemes:', error);
+      setSchemes([]);
     } else {
-      setSchemes(schemeData || []);
+      setSchemes(Array.isArray(schemeData) ? schemeData : []);
     }
 
-    const { data: usersData } = await supabase.from('custom_users').select('id, full_name, phone_number, email');
-    if (usersData) setUsersList(usersData);
+    const { data: usersData } = await supabase.from('custom_users').select('*');
+    if (usersData) setUsersList(Array.isArray(usersData) ? usersData : []);
 
     try {
       const storedInqs = JSON.parse(localStorage.getItem('ARADHANA_inquiries') || '[]');
@@ -226,16 +225,20 @@ export default function AdminDashboard() {
     setManualSubmitting(false);
   };
 
-  const filteredSchemes = schemes.filter(s => {
+  const filteredSchemes = (schemes || []).filter(s => {
+    if (!s) return false;
     const name = s.custom_users?.full_name?.toLowerCase() || s.custom_users?.email?.toLowerCase() || '';
-    const phone = String(s.custom_users?.phone_number || '');
-    const q = searchQuery.toLowerCase();
+    const phone = String(s.custom_users?.mobile || s.custom_users?.phone_number || '');
+    const q = (searchQuery || '').toLowerCase();
     return name.includes(q) || phone.includes(q);
   });
 
-  const filteredUsersList = usersList.filter(u => {
-    const term = manualUserSearch.toLowerCase();
-    return (u.full_name?.toLowerCase().includes(term) || String(u.phone_number || '').includes(term));
+  const filteredUsersList = (usersList || []).filter(u => {
+    if (!u) return false;
+    const term = (manualUserSearch || '').toLowerCase();
+    const name = u.full_name?.toLowerCase() || u.email?.toLowerCase() || '';
+    const phone = String(u.mobile || u.phone_number || '');
+    return name.includes(term) || phone.includes(term);
   });
 
   if (!isAuthenticated) {
@@ -365,7 +368,7 @@ export default function AdminDashboard() {
                       key={u.id} 
                       onClick={() => {
                         setManualUserId(u.id);
-                        setManualUserSearch(`${u.full_name || u.email} (${u.phone_number || 'No Phone'})`);
+                        setManualUserSearch(`${u.full_name || u.email} (${u.mobile || u.phone_number || 'No Phone'})`);
                         setShowUserDropdown(false);
                         fetchUserSchemes(u.id);
                       }}
@@ -373,7 +376,7 @@ export default function AdminDashboard() {
                       onMouseEnter={(e) => e.target.style.background = '#222'}
                       onMouseLeave={(e) => e.target.style.background = '#111'}
                     >
-                      {u.full_name || u.email} ({u.phone_number || 'No Phone'})
+                      {u.full_name || u.email} ({u.mobile || u.phone_number || 'No Phone'})
                     </li>
                   ))}
                   {filteredUsersList.length === 0 && <li style={{ padding: '10px', color: '#888' }}>No customers found</li>}
@@ -462,7 +465,7 @@ export default function AdminDashboard() {
                       {accLabel} <span style={{ color: '#aaa', fontWeight: 'normal', marginLeft: '5px' }}>| Started: {new Date(scheme.start_date).toLocaleDateString()}</span>
                     </div>
                     <h4 style={{ color: '#fff', fontSize: '1.2rem', marginBottom: '5px', paddingRight: '60px' }}>{user?.full_name || 'Unknown'}</h4>
-                    <p style={{ color: '#888', fontSize: '0.9rem', marginBottom: '15px' }}>{user?.phone_number || 'No Phone'}</p>
+                    <p style={{ color: '#888', fontSize: '0.9rem', marginBottom: '15px' }}>{user?.mobile || user?.phone_number || 'No Phone'}</p>
                     
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
                       <div>
@@ -595,7 +598,7 @@ function LedgerContent({ scheme, payments, handleApproval, setSelectedScheme, is
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '30px', fontSize: '1.1rem' }}>
         <div>
           <p style={{ margin: '0 0 5px' }}><strong>Customer Name:</strong> {user?.full_name || user?.email}</p>
-          <p style={{ margin: '0 0 5px' }}><strong>Phone Number:</strong> {user?.phone_number || '-'}</p>
+          <p style={{ margin: '0 0 5px' }}><strong>Phone Number:</strong> {user?.mobile || user?.phone_number || '-'}</p>
           <p style={{ margin: '0 0 5px' }}><strong>Scheme Start Date:</strong> {startDate.toLocaleDateString()}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
