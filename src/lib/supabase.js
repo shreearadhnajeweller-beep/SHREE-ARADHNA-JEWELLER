@@ -68,6 +68,8 @@ class QueryBuilder {
     this.orders = [];
     this.isSingle = false;
     this.selectFields = '*';
+    this.action = 'select';
+    this.actionPayload = null;
   }
 
   select(fields = '*') {
@@ -90,109 +92,128 @@ class QueryBuilder {
     return this;
   }
 
+  insert(rows) {
+    this.action = 'insert';
+    this.actionPayload = Array.isArray(rows) ? rows : [rows];
+    return this;
+  }
+
+  update(updates) {
+    this.action = 'update';
+    this.actionPayload = updates;
+    return this;
+  }
+
+  delete() {
+    this.action = 'delete';
+    return this;
+  }
+
   async executeQuery() {
-    let data = getTable(this.tableName);
+    try {
+      if (this.action === 'insert') {
+        const table = getTable(this.tableName);
+        const newItems = this.actionPayload.map(row => ({
+          id: row.id || `loc_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+          created_at: new Date().toISOString(),
+          start_date: new Date().toISOString(),
+          payment_date: new Date().toISOString(),
+          ...row
+        }));
 
-    for (const filter of this.filters) {
-      if (filter.op === 'eq') {
-        data = data.filter(item => String(item[filter.field]) === String(filter.value));
+        if (this.tableName === 'custom_users') {
+          for (const item of newItems) {
+            if (table.some(u => u.email === item.email)) {
+              return { data: null, error: { code: '23505', message: 'Email already registered.' } };
+            }
+          }
+        }
+
+        table.push(...newItems);
+        setTable(this.tableName, table);
+        const resultData = this.isSingle ? newItems[0] : (newItems.length === 1 ? newItems[0] : newItems);
+        return { data: resultData, error: null };
       }
-    }
 
-    for (const order of this.orders) {
-      data.sort((a, b) => {
-        if (a[order.field] < b[order.field]) return order.ascending ? -1 : 1;
-        if (a[order.field] > b[order.field]) return order.ascending ? 1 : -1;
-        return 0;
-      });
-    }
+      if (this.action === 'update') {
+        let table = getTable(this.tableName);
+        let updatedItems = [];
+        table = table.map(item => {
+          let matches = true;
+          for (const filter of this.filters) {
+            if (filter.op === 'eq' && String(item[filter.field]) !== String(filter.value)) {
+              matches = false;
+              break;
+            }
+          }
+          if (matches) {
+            const updated = { ...item, ...this.actionPayload };
+            updatedItems.push(updated);
+            return updated;
+          }
+          return item;
+        });
 
-    if (this.tableName === 'harvest_schemes') {
-      const users = getTable('custom_users');
-      const payments = getTable('payments');
-      data = data.map(scheme => ({
-        ...scheme,
-        custom_users: users.find(u => String(u.id) === String(scheme.user_id)) || null,
-        payments: payments.filter(p => String(p.scheme_id) === String(scheme.id))
-      }));
-    }
+        setTable(this.tableName, table);
+        const resultData = this.isSingle ? (updatedItems[0] || null) : updatedItems;
+        return { data: resultData, error: null };
+      }
 
-    if (this.isSingle) {
-      return { data: data[0] || null, error: data.length === 0 ? new Error('Not found') : null };
-    }
+      if (this.action === 'delete') {
+        let table = getTable(this.tableName);
+        let deletedItems = [];
+        table = table.filter(item => {
+          for (const filter of this.filters) {
+            if (filter.op === 'eq' && String(item[filter.field]) === String(filter.value)) {
+              deletedItems.push(item);
+              return false;
+            }
+          }
+          return true;
+        });
+        setTable(this.tableName, table);
+        return { data: this.isSingle ? (deletedItems[0] || null) : deletedItems, error: null };
+      }
 
-    return { data, error: null };
+      // Default: 'select'
+      let data = getTable(this.tableName);
+
+      for (const filter of this.filters) {
+        if (filter.op === 'eq') {
+          data = data.filter(item => String(item[filter.field]) === String(filter.value));
+        }
+      }
+
+      for (const order of this.orders) {
+        data.sort((a, b) => {
+          if (a[order.field] < b[order.field]) return order.ascending ? -1 : 1;
+          if (a[order.field] > b[order.field]) return order.ascending ? 1 : -1;
+          return 0;
+        });
+      }
+
+      if (this.tableName === 'harvest_schemes') {
+        const users = getTable('custom_users');
+        const payments = getTable('payments');
+        data = data.map(scheme => ({
+          ...scheme,
+          custom_users: users.find(u => String(u.id) === String(scheme.user_id)) || null,
+          payments: payments.filter(p => String(p.scheme_id) === String(scheme.id))
+        }));
+      }
+
+      if (this.isSingle) {
+        return { data: data[0] || null, error: data.length === 0 ? new Error('Not found') : null };
+      }
+
+      return { data, error: null };
+    } catch (err) {
+      return { data: null, error: err };
+    }
   }
 
   then(onfulfilled, onrejected) {
     return this.executeQuery().then(onfulfilled, onrejected);
-  }
-
-  async insert(rows) {
-    const table = getTable(this.tableName);
-    const newItems = rows.map(row => ({
-      id: row.id || `loc_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
-      created_at: new Date().toISOString(),
-      start_date: new Date().toISOString(),
-      payment_date: new Date().toISOString(),
-      ...row
-    }));
-
-    if (this.tableName === 'custom_users') {
-      for (const item of newItems) {
-        if (table.some(u => u.email === item.email)) {
-          return { data: null, error: { code: '23505', message: 'Email already registered.' } };
-        }
-      }
-    }
-
-    table.push(...newItems);
-    setTable(this.tableName, table);
-
-    const resultData = this.isSingle ? newItems[0] : newItems;
-
-    return {
-      data: resultData,
-      error: null,
-      select: () => ({
-        single: () => ({ data: newItems[0], error: null })
-      })
-    };
-  }
-
-  async update(updates) {
-    let table = getTable(this.tableName);
-
-    table = table.map(item => {
-      let matches = true;
-      for (const filter of this.filters) {
-        if (filter.op === 'eq' && String(item[filter.field]) !== String(filter.value)) {
-          matches = false;
-          break;
-        }
-      }
-      if (matches) {
-        return { ...item, ...updates };
-      }
-      return item;
-    });
-
-    setTable(this.tableName, table);
-    return { data: null, error: null };
-  }
-
-  async delete() {
-    let table = getTable(this.tableName);
-    table = table.filter(item => {
-      for (const filter of this.filters) {
-        if (filter.op === 'eq' && String(item[filter.field]) === String(filter.value)) {
-          return false;
-        }
-      }
-      return true;
-    });
-    setTable(this.tableName, table);
-    return { data: null, error: null };
   }
 }
 
@@ -244,5 +265,10 @@ export const supabase = {
   from(tableName) {
     return new QueryBuilder(tableName);
   },
-  storage: storageClient
+  storage: storageClient,
+  auth: {
+    async getSession() { return { data: { session: null }, error: null }; },
+    async getUser() { return { data: { user: null }, error: null }; },
+    onAuthStateChange() { return { data: { subscription: { unsubscribe() {} } } }; }
+  }
 };
