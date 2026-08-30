@@ -18,25 +18,27 @@ const bannerImages = [
 ];
 
 
-// Best Sellers
+// Best Sellers - 5 New Official Photoshoot Collections
 const bestSellerImages = [
-  
   {
-    url: '/assets/ZIPRINGS/new_ring_3.jpeg',
-    title: 'Modern Geometric Gents Ring'
+    url: '/assets/bestsellers/bestseller_1.jpg',
+    title: 'Royal Emerald Kundan Necklace Set'
   },
   {
-    url: '/assets/ZIPMANGALSUTRA/new_mangalsutra_2.jpeg',
-    title: 'Elegant Short Mangalsutra'
+    url: '/assets/bestsellers/bestseller_2.jpg',
+    title: 'Antique Gold Long Haar & Maang Tikka'
   },
   {
-    url: '/assets/ZIPRINGS/new_ring_1.jpeg',
-    title: 'Elegant Ladies Gold Ring'
+    url: '/assets/bestsellers/bestseller_3.jpg',
+    title: 'Gold Leaf Filigree Choker & Earrings'
   },
-  
   {
-    url: '/assets/ZIPRINGS/new_ring_4.jpeg',
-    title: 'Classic Gents Band Ring'
+    url: '/assets/bestsellers/bestseller_4.jpg',
+    title: 'Diamond & White Gold Bridal Choker'
+  },
+  {
+    url: '/assets/bestsellers/bestseller_5.jpg',
+    title: 'Heritage Meenakari Kundan & Bangle Set'
   }
 ];
 
