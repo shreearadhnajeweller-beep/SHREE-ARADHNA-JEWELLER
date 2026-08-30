@@ -3,7 +3,50 @@ import { createClient } from '@supabase/supabase-js';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://kxnsgrytvigymczwaay.supabase.co';
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4bnNncnl0dmlneW1zenp3YWF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxMDcwMzYsImV4cCI6MjEwMzY4MzAzNn0.7g_8-UPfEkgQUUFKspEVHbYZas5orHR5qWqwYbLytEQ';
 
-export const realSupabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const rawRealSupabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+export const realSupabase = {
+  from(tableName) {
+    try {
+      const query = rawRealSupabase.from(tableName);
+      return new Proxy(query, {
+        get(target, prop) {
+          if (typeof target[prop] === 'function') {
+            return function(...args) {
+              try {
+                const res = target[prop](...args);
+                if (res && typeof res.then === 'function') {
+                  return res.catch(err => {
+                    console.warn(`Supabase Cloud fallback for ${tableName}:`, err?.message || err);
+                    return supabase.from(tableName);
+                  });
+                }
+                return res;
+              } catch (e) {
+                return supabase.from(tableName);
+              }
+            };
+          }
+          return target[prop];
+        }
+      });
+    } catch (e) {
+      return supabase.from(tableName);
+    }
+  },
+  channel(name) {
+    try {
+      return rawRealSupabase.channel(name);
+    } catch (e) {
+      return { on() { return this; }, subscribe() { return this; } };
+    }
+  },
+  removeChannel(ch) {
+    try { rawRealSupabase.removeChannel(ch); } catch (e) {}
+  },
+  storage: rawRealSupabase.storage,
+  auth: rawRealSupabase.auth
+};
 
 const STORAGE_KEYS = {
   store_settings: 'ARADHANA_DB_store_settings',
