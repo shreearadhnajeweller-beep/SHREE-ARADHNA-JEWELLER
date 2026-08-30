@@ -19,7 +19,7 @@ function initDefaults() {
   if (typeof window === 'undefined') return;
   if (!localStorage.getItem(STORAGE_KEYS.store_settings)) {
     localStorage.setItem(STORAGE_KEYS.store_settings, JSON.stringify([
-      { id: 1, upi_id: '7202921222@okbizaxis', qr_code_url: '/assets/logo.jpg' }
+      { id: 1, upi_id: '7202921222@okbizaxis', qr_code_url: '/assets/logo_badge.png' }
     ]));
   }
   if (!localStorage.getItem(STORAGE_KEYS.hardik_rates)) {
