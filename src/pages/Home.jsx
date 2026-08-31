@@ -1787,6 +1787,7 @@ export default function Home() {
           const formatted = {
             gold24k: Number(data.gold24k) > 0 ? Number(data.gold24k) : 7350,
             gold22k: Number(data.gold22k) > 0 ? Number(data.gold22k) : 6737,
+            gold18k: Number(data.gold18k) > 0 ? Number(data.gold18k) : Math.round((Number(data.gold24k) || 7350) * 0.75),
             silver: Number(data.silver1kg) > 0 ? Math.round(Number(data.silver1kg) / 1000) : 86,
             silver1kg: Number(data.silver1kg) > 0 ? Number(data.silver1kg) : 85500,
             lastUpdated: data.updated_at ? new Date(data.updated_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true }) : new Date().toLocaleString()
@@ -1828,6 +1829,7 @@ export default function Home() {
           const formatted = {
             gold24k: Number(data.gold24k) > 0 ? Number(data.gold24k) : 7350,
             gold22k: Number(data.gold22k) > 0 ? Number(data.gold22k) : 6737,
+            gold18k: Number(data.gold18k) > 0 ? Number(data.gold18k) : Math.round((Number(data.gold24k) || 7350) * 0.75),
             silver: Number(data.silver1kg) > 0 ? Math.round(Number(data.silver1kg) / 1000) : 86,
             silver1kg: Number(data.silver1kg) > 0 ? Number(data.silver1kg) : 85500,
             lastUpdated: data.updated_at ? new Date(data.updated_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true }) : new Date().toLocaleString()
