@@ -51,18 +51,26 @@ export default async function handler(req, res) {
   try {
     let subscriptions = [];
 
-    // 1. Fetch from push_subscriptions DB table first
-    const { data: dbData } = await supabase.from('push_subscriptions').select('subscription_json');
-    if (dbData && dbData.length > 0) {
-      subscriptions = dbData.map(row => row.subscription_json).filter(Boolean);
-    }
-
-    // 2. Storage Bucket Sync Backup
-    if (subscriptions.length === 0) {
+    // 1. Download from Storage Bucket (Primary Storage)
+    try {
       const { data: stData, error: stError } = await supabase.storage.from('payment_screenshots').download('push_subscriptions.json');
       if (!stError && stData) {
         const text = await stData.text();
         try { subscriptions = JSON.parse(text); } catch (e) { subscriptions = []; }
+      }
+    } catch (stErr) {
+      console.warn('Storage push read note:', stErr.message);
+    }
+
+    // 2. Download from DB Table if storage is empty
+    if (!subscriptions || subscriptions.length === 0) {
+      try {
+        const { data: dbData } = await supabase.from('push_subscriptions').select('subscription_json');
+        if (dbData && dbData.length > 0) {
+          subscriptions = dbData.map(row => row.subscription_json).filter(Boolean);
+        }
+      } catch (dbErr) {
+        console.warn('DB push read note:', dbErr.message);
       }
     }
 
