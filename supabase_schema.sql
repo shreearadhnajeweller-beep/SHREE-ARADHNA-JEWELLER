@@ -39,10 +39,15 @@ CREATE TABLE IF NOT EXISTS public.custom_users (
   full_name TEXT NOT NULL,
   email TEXT UNIQUE NOT NULL,
   mobile TEXT,
-  city TEXT DEFAULT 'ADIPUR (KUTCH)',
+  phone_number TEXT,
+  password TEXT,
   password_hash TEXT,
+  city TEXT DEFAULT 'ADIPUR (KUTCH)',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+ALTER TABLE public.custom_users ADD COLUMN IF NOT EXISTS password TEXT;
+ALTER TABLE public.custom_users ADD COLUMN IF NOT EXISTS phone_number TEXT;
 
 
 -- 4. Digital Gold Harvest Saving Schemes Table

@@ -19,29 +19,36 @@ export default function Login() {
 
     try {
       if (isSignUp) {
-        const { data, error } = await supabase
-          .from('custom_users')
-          .insert([{ email, password, full_name: fullName, phone_number: phone }])
-          .select()
-          .single();
+        let insertObj = { email, password, password_hash: password, full_name: fullName, phone_number: phone, mobile: phone };
+        let res = await supabase.from('custom_users').insert([insertObj]).select().single();
 
-        if (error) {
-          if (error.code === '23505') throw new Error('Email already registered.');
-          throw error;
+        if (res.error && res.error.message.includes('column')) {
+          // Fallback if DB table has slight schema variation
+          const altObj = { email, password_hash: password, full_name: fullName, mobile: phone };
+          res = await supabase.from('custom_users').insert([altObj]).select().single();
+        }
+
+        if (res.error) {
+          if (res.error.code === '23505') throw new Error('Email already registered.');
+          throw res.error;
         }
 
         alert('Profile created successfully! You are now logged in.');
-        localStorage.setItem('userId', data.id);
+        if (res.data?.id) localStorage.setItem('userId', res.data.id);
         navigate(-1);
       } else {
-        const { data, error } = await supabase
+        let { data, error } = await supabase
           .from('custom_users')
           .select('*')
           .eq('email', email)
-          .eq('password', password)
           .single();
 
         if (error || !data) {
+          throw new Error('Invalid email or password');
+        }
+
+        const userPass = data.password || data.password_hash;
+        if (userPass && userPass !== password) {
           throw new Error('Invalid email or password');
         }
 
