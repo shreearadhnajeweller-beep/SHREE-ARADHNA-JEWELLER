@@ -78,14 +78,20 @@ if ('serviceWorker' in navigator) {
               console.log('Notification permission granted.');
               if ('PushManager' in window && reg.pushManager) {
                 const applicationServerKey = urlB64ToUint8Array('BJ1f59sigjz474wgQzxDlE3V4ShJPnfOd2EH5xJIbpyJWo7Wlq4wyNxlFM3C2t9nxdB9zUK3nsVfBGpvKs0aQBk');
-                reg.pushManager.subscribe({
-                  userVisibleOnly: true,
-                  applicationServerKey: applicationServerKey
+                
+                reg.pushManager.getSubscription().then(async (existingSub) => {
+                  if (existingSub) {
+                    try { await existingSub.unsubscribe(); } catch (e) {}
+                  }
+                  return reg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: applicationServerKey
+                  });
                 }).then((subscription) => {
                   console.log('Client subscribed to push notification engine:', subscription);
                   saveSubscriptionToStorage(subscription);
                 }).catch((err) => {
-                  console.warn('Push manager subscription failed:', err.message);
+                  console.warn('Push manager subscription note:', err.message);
                 });
               }
             }
