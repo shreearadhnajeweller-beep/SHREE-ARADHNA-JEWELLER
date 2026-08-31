@@ -1995,13 +1995,12 @@ export default function Home() {
       minute: '2-digit', 
       hour12: true 
     });
-    const silverValue = Number(tempSilver);
-    const silver1kgVal = silverValue < 1000 ? silverValue * 1000 : silverValue;
+    const gold18kVal = Number(temp18k) > 0 ? Number(temp18k) : Math.round(Number(temp24k) * 0.75);
 
     const newRates = {
       gold24k: Number(temp24k),
       gold22k: Number(temp22k),
-      gold18k: Number(temp18k),
+      gold18k: gold18kVal,
       silver: silverValue < 1000 ? silverValue : Math.round(silverValue / 1000),
       silver1kg: silver1kgVal,
       lastUpdated: now
@@ -2011,6 +2010,7 @@ export default function Home() {
       id: 1,
       gold24k: Number(temp24k),
       gold22k: Number(temp22k),
+      gold18k: gold18kVal,
       silver1kg: silver1kgVal,
       updated_at: new Date().toISOString()
     };
@@ -2019,11 +2019,9 @@ export default function Home() {
     localStorage.setItem('ARADHANA_gold_rates', JSON.stringify(newRates));
 
     try {
-      await supabase.from('hardik_rates').update(newRates).eq('id', 1);
-      try {
-        await realSupabase.from('hardik_rates').upsert(dbPayload);
-      } catch (cloudErr) {
-        console.warn("Cloud rates sync note:", cloudErr);
+      const { error: upsertErr } = await realSupabase.from('hardik_rates').upsert(dbPayload);
+      if (upsertErr) {
+        console.warn("Cloud rate upsert note:", upsertErr.message);
       }
       
       alert('Live Gold & Silver Rates updated instantly in the database!');
