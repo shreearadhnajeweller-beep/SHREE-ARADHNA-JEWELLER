@@ -3,50 +3,8 @@ import { createClient } from '@supabase/supabase-js';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://kxnsgrytvigymczzwaay.supabase.co';
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_gGAW7HL89E33HEdfAEfRgQ_lKSoL-CN';
 
-const rawRealSupabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-export const realSupabase = {
-  from(tableName) {
-    try {
-      const query = rawRealSupabase.from(tableName);
-      return new Proxy(query, {
-        get(target, prop) {
-          if (typeof target[prop] === 'function') {
-            return function(...args) {
-              try {
-                const res = target[prop](...args);
-                if (res && typeof res.then === 'function') {
-                  return res.catch(err => {
-                    console.warn(`Supabase Cloud fallback for ${tableName}:`, err?.message || err);
-                    return supabase.from(tableName);
-                  });
-                }
-                return res;
-              } catch (e) {
-                return supabase.from(tableName);
-              }
-            };
-          }
-          return target[prop];
-        }
-      });
-    } catch (e) {
-      return supabase.from(tableName);
-    }
-  },
-  channel(name) {
-    try {
-      return rawRealSupabase.channel(name);
-    } catch (e) {
-      return { on() { return this; }, subscribe() { return this; } };
-    }
-  },
-  removeChannel(ch) {
-    try { rawRealSupabase.removeChannel(ch); } catch (e) {}
-  },
-  storage: rawRealSupabase.storage,
-  auth: rawRealSupabase.auth
-};
+export const rawRealSupabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+export const realSupabase = rawRealSupabase;
 
 const STORAGE_KEYS = {
   store_settings: 'ARADHANA_DB_store_settings',
@@ -304,14 +262,4 @@ const storageClient = {
   }
 };
 
-export const supabase = {
-  from(tableName) {
-    return new QueryBuilder(tableName);
-  },
-  storage: storageClient,
-  auth: {
-    async getSession() { return { data: { session: null }, error: null }; },
-    async getUser() { return { data: { user: null }, error: null }; },
-    onAuthStateChange() { return { data: { subscription: { unsubscribe() {} } } }; }
-  }
-};
+export const supabase = rawRealSupabase;
