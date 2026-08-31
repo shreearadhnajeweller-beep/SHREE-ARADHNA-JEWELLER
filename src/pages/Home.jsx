@@ -2025,17 +2025,37 @@ export default function Home() {
       if (upsertErr) {
         console.warn("Cloud rate upsert note:", upsertErr.message);
       }
+
+      // 1. Immediate in-app Notification if permission granted
+      if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+        try {
+          new Notification('ARADHANA GOLD HOUSE', {
+            body: `🔔 Live Rates Updated! 24K: ₹${temp24k}/g | 22K: ₹${temp22k}/g`,
+            icon: '/assets/logo_badge.png',
+            badge: '/assets/logo_badge.png'
+          });
+        } catch (nErr) {
+          console.warn('Local notification note:', nErr.message);
+        }
+      }
+
+      // 2. Broadcast Push notification to all PWA subscribed clients (works when app is closed)
+      try {
+        await fetch('/api/send-push', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            customTitle: 'ARADHANA GOLD HOUSE',
+            customBody: `🔔 Live Gold & Silver Rates Updated! 24K: ₹${temp24k}/g | 22K: ₹${temp22k}/g | 18K: ₹${gold18kVal}/g`,
+            gold24k: Number(temp24k), 
+            gold22k: Number(temp22k) 
+          })
+        });
+      } catch (pErr) {
+        console.warn('Push API note:', pErr.message);
+      }
       
-      alert('Live Gold & Silver Rates updated instantly in the database!');
-      
-      // Broadcast Push notification to all PWA subscribed clients (works when app is closed)
-      fetch('/api/send-push', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ gold24k: Number(temp24k), gold22k: Number(temp22k) })
-      }).then(res => res.json())
-        .then(data => console.log('Push broadcast status:', data))
-        .catch(err => console.error('Push broadcast error:', err));
+      alert('Live Gold & Silver Rates updated & notification broadcast sent!');
     } catch (err) {
       console.error("Network error during update:", err);
       alert('Rates updated locally!');
