@@ -1995,6 +1995,8 @@ export default function Home() {
       minute: '2-digit', 
       hour12: true 
     });
+    const silverValue = Number(tempSilver) || 85500;
+    const silver1kgVal = silverValue < 1000 ? silverValue * 1000 : silverValue;
     const gold18kVal = Number(temp18k) > 0 ? Number(temp18k) : Math.round(Number(temp24k) * 0.75);
 
     const newRates = {
