@@ -62,7 +62,13 @@ export default function Dashboard() {
   const startScheme = async (e) => {
     e.preventDefault();
     const amount = e.target.amount.value;
-    const { error } = await supabase.from('harvest_schemes').insert([{ user_id: user.id, monthly_amount: amount, status: 'active' }]);
+    const schemeId = 'SCH_' + Math.random().toString(36).substring(2, 9).toUpperCase();
+    const { error } = await supabase.from('harvest_schemes').insert([{ 
+      id: schemeId, 
+      user_id: user.id, 
+      monthly_amount: Number(amount), 
+      status: 'active' 
+    }]);
     if (error) alert('Error starting scheme: ' + error.message);
     else {
       setShowNewSchemeForm(false);
@@ -117,24 +123,29 @@ export default function Dashboard() {
       screenshot_url = data.publicUrl;
     }
 
-    const existingPayment = targetScheme.payments?.find(p => p.month_number === selectedMonth);
+    const existingPayment = targetScheme.payments?.find(p => p.month_number === selectedMonth || p.installment_no === selectedMonth);
 
     let submitError;
     if (existingPayment) {
       const { error } = await supabase.from('payments').update({
         status: 'pending_approval',
         payment_method: paymentMethod,
+        payment_proof_url: screenshot_url,
         screenshot_url: screenshot_url
       }).eq('id', existingPayment.id);
       submitError = error;
     } else {
+      const payId = 'PAY_' + Math.random().toString(36).substring(2, 9).toUpperCase();
       const { error } = await supabase.from('payments').insert([{ 
+        id: payId,
         scheme_id: selectedSchemeId, 
         user_id: user.id, 
+        installment_no: selectedMonth,
         month_number: selectedMonth, 
         amount: targetScheme.monthly_amount,
         status: 'pending_approval',
         payment_method: paymentMethod,
+        payment_proof_url: screenshot_url,
         screenshot_url: screenshot_url
       }]);
       submitError = error;
