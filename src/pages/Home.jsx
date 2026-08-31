@@ -2026,20 +2026,7 @@ export default function Home() {
         console.warn("Cloud rate upsert note:", upsertErr.message);
       }
 
-      // 1. Immediate in-app Notification if permission granted
-      if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-        try {
-          new Notification('ARADHANA GOLD HOUSE', {
-            body: `🔔 Live Rates Updated! 24K: ₹${temp24k}/g | 22K: ₹${temp22k}/g`,
-            icon: '/assets/logo_badge.png',
-            badge: '/assets/logo_badge.png'
-          });
-        } catch (nErr) {
-          console.warn('Local notification note:', nErr.message);
-        }
-      }
-
-      // 2. Broadcast Push notification to all PWA subscribed clients (works when app is closed)
+      // Broadcast Push notification to all PWA subscribed clients (works when app is closed)
       try {
         const pushApiUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost' 
           ? 'https://shree-aradhna-jeweller.vercel.app/api/send-push' 
