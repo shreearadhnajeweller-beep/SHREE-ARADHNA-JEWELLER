@@ -1,11 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://kxnsgrytvigymczzwaay.supabase.co';
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_gGAW7HL89E33HEdfAEfRgQ_lKSoL-CN';
-
-export const rawRealSupabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-export const realSupabase = rawRealSupabase;
-
 const STORAGE_KEYS = {
   store_settings: 'ARADHANA_DB_store_settings',
   hardik_rates: 'ARADHANA_DB_rates',
@@ -262,4 +257,22 @@ const storageClient = {
   }
 };
 
-export const supabase = rawRealSupabase;
+export const localSupabase = {
+  from(tableName) {
+    return new QueryBuilder(tableName);
+  },
+  channel(name) {
+    return { on() { return this; }, subscribe() { return this; } };
+  },
+  removeChannel(ch) {},
+  storage: storageClient,
+  auth: {
+    async getSession() { return { data: { session: null }, error: null }; },
+    async getUser() { return { data: { user: null }, error: null }; },
+    onAuthStateChange() { return { data: { subscription: { unsubscribe() {} } } }; }
+  }
+};
+
+export const supabase = localSupabase;
+export const realSupabase = localSupabase;
+export const rawRealSupabase = localSupabase;
