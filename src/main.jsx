@@ -77,7 +77,7 @@ if ('serviceWorker' in navigator) {
             if (permission === 'granted') {
               console.log('Notification permission granted.');
               if ('PushManager' in window && reg.pushManager) {
-                const applicationServerKey = urlB64ToUint8Array('BEXW6qmnlL19TYxTUbLNgawyJPLEe0dWursfi25_AxGvbBRu--RSdGIFU0OMfdd5mV5yOfSF19V7B0Jdwro497Y');
+                const applicationServerKey = urlB64ToUint8Array('BJ1f59sigjz474wgQzxDlE3V4ShJPnfOd2EH5xJIbpyJWo7Wlq4wyNxlFM3C2t9nxdB9zUK3nsVfBGpvKs0aQBk');
                 reg.pushManager.subscribe({
                   userVisibleOnly: true,
                   applicationServerKey: applicationServerKey

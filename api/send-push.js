@@ -1,13 +1,13 @@
 ﻿import webpush from 'web-push';
 import { createClient } from '@supabase/supabase-js';
 
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL || 'https://kxnsgrytvigymczzwaay.supabase.co';
-const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_gGAW7HL89E33HEdfAEfRgQ_lKSoL-CN';
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL || 'https://wtsdorhnjmphrwwvmfiq.supabase.co';
+const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_zKjqNEXu-yvWfQWMlZkEww_ZFS5yMqC';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const publicVapidKey = 'BEXW6qmnlL19TYxTUbLNgawyJPLEe0dWursfi25_AxGvbBRu--RSdGIFU0OMfdd5mV5yOfSF19V7B0Jdwro497Y';
-const privateVapidKey = process.env.VAPID_PRIVATE_KEY || 'W7V503jE1T1W7_5b6vX8v2f3_4a5b6c7d8e9f0a1b2c';
+const publicVapidKey = process.env.VITE_VAPID_PUBLIC_KEY || 'BJ1f59sigjz474wgQzxDlE3V4ShJPnfOd2EH5xJIbpyJWo7Wlq4wyNxlFM3C2t9nxdB9zUK3nsVfBGpvKs0aQBk';
+const privateVapidKey = process.env.VAPID_PRIVATE_KEY || 'PukYBGfImssXUD0iPf0DkxBQAIp5Xl3wPf2sSOtRm9U';
 
 try {
   webpush.setVapidDetails(
