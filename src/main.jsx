@@ -24,43 +24,43 @@ function urlB64ToUint8Array(base64String) {
   return outputArray;
 }
 
-// Function to upload new background push subscription objects to Supabase storage
+// Function to upload new background push subscription objects to Supabase
 async function saveSubscriptionToStorage(subscription) {
-  const bucketName = 'payment_screenshots';
-  const fileName = 'push_subscriptions.json';
-  
   try {
+    const endpoint = subscription.endpoint;
+    const subId = 'SUB_' + Math.random().toString(36).substring(2, 9).toUpperCase();
+
+    // 1. Try DB Table Insert / Upsert
+    try {
+      await supabase.from('push_subscriptions').upsert({
+        id: subId,
+        endpoint: endpoint,
+        subscription_json: subscription,
+        created_at: new Date().toISOString()
+      }, { onConflict: 'endpoint' });
+    } catch (dbErr) {
+      console.warn('Push DB sync note:', dbErr.message);
+    }
+
+    // 2. Storage Bucket Sync Backup
+    const bucketName = 'payment_screenshots';
+    const fileName = 'push_subscriptions.json';
     const { data, error } = await supabase.storage.from(bucketName).download(fileName);
     let subscriptions = [];
     if (!error && data) {
       const text = await data.text();
-      try {
-        subscriptions = JSON.parse(text);
-      } catch (e) {
-        subscriptions = [];
-      }
+      try { subscriptions = JSON.parse(text); } catch (e) { subscriptions = []; }
     }
     
-    const subStr = JSON.stringify(subscription);
-    const exists = subscriptions.some(s => JSON.stringify(s) === subStr || s.endpoint === subscription.endpoint);
-    
+    const exists = subscriptions.some(s => s.endpoint === endpoint);
     if (!exists) {
       subscriptions.push(subscription);
       const fileBlob = new Blob([JSON.stringify(subscriptions)], { type: 'application/json' });
-      const { error: uploadError } = await supabase.storage
-        .from(bucketName)
-        .upload(fileName, fileBlob, { upsert: true });
-      
-      if (uploadError) {
-        console.error('Failed to sync push subscription details:', uploadError.message);
-      } else {
-        console.log('Background push subscription details synced to Supabase storage.');
-      }
-    } else {
-      console.log('Push subscription details already synced.');
+      await supabase.storage.from(bucketName).upload(fileName, fileBlob, { upsert: true });
     }
+    console.log('Push subscription synced successfully!');
   } catch (err) {
-    console.error('Error handling background push synchronization:', err);
+    console.error('Error syncing push subscription:', err.message);
   }
 }
 

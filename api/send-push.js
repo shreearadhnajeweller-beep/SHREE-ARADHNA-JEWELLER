@@ -20,7 +20,6 @@ try {
 }
 
 export default async function handler(req, res) {
-  // CORS Headers
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -50,20 +49,25 @@ export default async function handler(req, res) {
   });
 
   try {
-    const { data, error } = await supabase.storage.from('payment_screenshots').download('push_subscriptions.json');
     let subscriptions = [];
 
-    if (!error && data) {
-      const text = await data.text();
-      try {
-        subscriptions = JSON.parse(text);
-      } catch (e) {
-        subscriptions = [];
+    // 1. Fetch from push_subscriptions DB table first
+    const { data: dbData } = await supabase.from('push_subscriptions').select('subscription_json');
+    if (dbData && dbData.length > 0) {
+      subscriptions = dbData.map(row => row.subscription_json).filter(Boolean);
+    }
+
+    // 2. Storage Bucket Sync Backup
+    if (subscriptions.length === 0) {
+      const { data: stData, error: stError } = await supabase.storage.from('payment_screenshots').download('push_subscriptions.json');
+      if (!stError && stData) {
+        const text = await stData.text();
+        try { subscriptions = JSON.parse(text); } catch (e) { subscriptions = []; }
       }
     }
 
     if (!subscriptions || subscriptions.length === 0) {
-      return res.status(200).json({ success: true, count: 0, message: 'No subscribed devices found in database.' });
+      return res.status(200).json({ success: true, count: 0, message: 'No subscribed devices found in database or storage.' });
     }
 
     let sentCount = 0;
