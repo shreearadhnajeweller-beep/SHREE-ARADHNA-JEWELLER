@@ -37,7 +37,11 @@ export default function AdminDashboard() {
     const bodyVal = e.target.elements.alertBody.value;
 
     try {
-      const response = await fetch('/api/send-push', {
+      const pushApiUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost' 
+        ? 'https://shree-aradhna-jeweller.vercel.app/api/send-push' 
+        : '/api/send-push';
+
+      const response = await fetch(pushApiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ customTitle: titleVal, customBody: bodyVal })

@@ -2041,7 +2041,11 @@ export default function Home() {
 
       // 2. Broadcast Push notification to all PWA subscribed clients (works when app is closed)
       try {
-        await fetch('/api/send-push', {
+        const pushApiUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost' 
+          ? 'https://shree-aradhna-jeweller.vercel.app/api/send-push' 
+          : '/api/send-push';
+
+        await fetch(pushApiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
