@@ -1,23 +1,23 @@
 {
   "short_name": "ARADHANA GOLD HOUSE",
-  "name": "ARADHANA GOLD HOUSE",
+  "name": "ARADHANA GOLD HOUSE - ADIPUR (KUTCH)",
   "icons": [
     {
-      "src": "assets/logo.png",
+      "src": "/assets/logo_badge.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any maskable"
     },
     {
-      "src": "assets/logo.png",
+      "src": "/assets/logo_badge.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any maskable"
     }
   ],
   "start_url": "/",
-  "background_color": "#ffffff",
-  "theme_color": "#d48a94",
+  "background_color": "#721B29",
+  "theme_color": "#721B29",
   "display": "standalone",
   "orientation": "portrait"
 }

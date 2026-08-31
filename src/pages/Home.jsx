@@ -2122,6 +2122,13 @@ export default function Home() {
             <span className="ticker-item">SILVER: <strong>₹{goldRates.silver || 86}/g</strong></span>
             <span className="ticker-item-separator"> | </span>
             <span className="ticker-item" style={{ color: '#ffffff', fontWeight: 500, fontSize: '9px' }}>[UPDATED: {goldRates.lastUpdated}]</span>
+            <button 
+              onClick={() => { if (window.subscribeUserToPush) window.subscribeUserToPush(); }}
+              style={{ background: 'rgba(255,255,255,0.2)', border: 'none', color: '#fff', fontSize: '9px', fontWeight: 'bold', padding: '2px 8px', borderRadius: '4px', cursor: 'pointer', marginLeft: '8px', textTransform: 'uppercase' }}
+              title="Click to enable live rate push notifications on this device"
+            >
+              🔔 ALERTS
+            </button>
           </div>
         </div>
       </div>
