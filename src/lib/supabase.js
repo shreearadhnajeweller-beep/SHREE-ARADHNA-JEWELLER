@@ -1,6 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://kxnsgrytvigymczzwaay.supabase.co';
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://wtsdorhnjmphrwwvmfiq.supabase.co';
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_zKjqNEXu-yvWfQWMlZkEww_ZFS5yMqC';
+
+export const rawRealSupabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const STORAGE_KEYS = {
   store_settings: 'ARADHANA_DB_store_settings',
   hardik_rates: 'ARADHANA_DB_rates',
@@ -273,6 +276,5 @@ export const localSupabase = {
   }
 };
 
-export const supabase = localSupabase;
-export const realSupabase = localSupabase;
-export const rawRealSupabase = localSupabase;
+export const supabase = rawRealSupabase;
+export const realSupabase = rawRealSupabase;
